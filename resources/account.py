@@ -25,7 +25,6 @@ class AccountList(MethodView):
 
     @blp.arguments(AccountSchema)
     @blp.response(201, AccountSchema)
-    @jwt_required()
     def post(self, account_data): 
         account = AccountModel(**account_data)
 
