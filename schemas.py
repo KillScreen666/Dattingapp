@@ -34,8 +34,7 @@ class RoleUpdateSchema(Schema):
 
 class UserSchema(PlainUserSchema):
     account_id = fields.Int(required=True, load_only=True)
-    account = fields.Nested(PlainAccountSchema(), dump_only=True)
-    
+    account = fields.Nested(PlainAccountSchema(), dump_only=True)    
     roles = fields.List(fields.Nested(PlainRoleSchema()), dump_only="True")
 
 class RoleAndUserSchema(Schema):

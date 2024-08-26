@@ -19,14 +19,16 @@ blp = Blueprint("User", "user", description="Operations on users")
 
 def send_simple_message(to, subject, body):
     domain = os.getenv("MAILGUN_DOMAIN")
-
     return requests.post(
         f"https://api.mailgun.net/v3/{domain}/messages",
         auth=("api", os.getenv("MAILGUN_API_KEY")),
-        data={f"from": "Your favorite dating service <{domain}>",
+        data={
+            "from": f"Datting app <mailgun@{domain}>",
             "to": [to],
             "subject": subject,
-            "text": body})
+            "text": body,
+        },
+    )
 
 @blp.route("/register")
 class UserRegister(MethodView):
