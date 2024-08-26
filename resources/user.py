@@ -53,8 +53,8 @@ class UserRegister(MethodView):
             # TODO create new or add to existing
             account_id=user_data["account_id"],
         )
-        """         db.session.add(user)
-        db.session.commit() """
+        db.session.add(user)
+        db.session.commit()
 
         mailgun_response = send_simple_message(
             to=user.email,
