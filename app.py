@@ -1,5 +1,7 @@
 import os
 import secrets
+# redis
+import redis
 
 from flask import Flask
 from flask_smorest import Api
@@ -8,6 +10,10 @@ from flask_jwt_extended import JWTManager
 from flask import Flask, jsonify
 from blocklist import BLOCKLIST
 from dotenv import load_dotenv
+# redis worker
+from rq import Queue
+
+
 
 from db import db
 
@@ -22,6 +28,10 @@ def create_app(db_url=None):
     app = Flask(__name__)
     load_dotenv()
 
+    connection = redis.from_url(
+        os.getenv("REDIS_URL")
+        )
+    app.queue = Queue("emails", connection=connection)
     app.config["API_TITLE"] = "Datting App REST API"
     app.config["API_VERSION"] = "v1"
     app.config["OPENAPI_VERSION"] = "3.0.3"
