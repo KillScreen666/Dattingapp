@@ -41,3 +41,6 @@ class UserSchema(PlainUserSchema):
 class RoleAndUserSchema(Schema):
     user = fields.Nested(UserSchema)
     role = fields.Nested(RoleSchema)
+
+class UserRegisterSchema(UserSchema):
+    email = fields.Str(required=True)
