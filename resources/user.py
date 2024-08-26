@@ -12,27 +12,14 @@ from passlib.hash import pbkdf2_sha256
 from db import db
 from models import UserModel
 from schemas import UserSchema, UserUpdateSchema, UserRegisterSchema
+# token block list
 from blocklist import BLOCKLIST
+# importing send email function
+from tasks import send_simple_message
 
 blp = Blueprint("User", "user", description="Operations on users")
 
 
-def send_simple_message(to, subject, body):
-    domain = os.getenv("MAILGUN_DOMAIN")
-
-
-
-
-    return requests.post(
-        f"https://api.mailgun.net/v3/{domain}/messages",
-        auth=("api", os.getenv("MAILGUN_API_KEY")),
-        data={
-            "from": f"Datting app <mailgun@{domain}>",
-            "to": [to],
-            "subject": subject,
-            "text": body,
-        },
-    )
 
 
 @blp.route("/register")
@@ -56,13 +43,11 @@ class UserRegister(MethodView):
         db.session.add(user)
         db.session.commit()
 
-        mailgun_response = send_simple_message(
+        send_simple_message(
             to=user.email,
             subject="Successfully signed up",
-            body=f"Hi {user.username}! You have successfully signed up to the Datting REST API."
+            body=f"Hi {user.username}! You have successfully signed up to the Stores REST API."
         )
-
-        print(mailgun_response)
 
         return {"message": "User created successfully."}, 201
 
@@ -87,7 +72,7 @@ class TokenRefresh(MethodView):
     def post(self):
         current_user = get_jwt_identity()
         new_token = create_access_token(identity=current_user, fresh=False)
-        # Make it clear that when to add the refresh token to the blocklist will depend on the app design
+        # TODO add reddis here
         jti = get_jwt()["jti"]
         BLOCKLIST.add(jti)
         return {"access_token": new_token}, 200
